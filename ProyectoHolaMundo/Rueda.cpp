@@ -21,6 +21,8 @@ void Rueda::Draw()
 
 void Rueda::setTargetF(float target) {
 	this->targetF = target;
+
+	//
 }
 
 void Rueda::Girar(float target)
