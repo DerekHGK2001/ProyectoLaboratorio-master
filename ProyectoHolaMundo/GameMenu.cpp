@@ -1,16 +1,17 @@
-
 #include <iostream>
+#include <string>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+#include "Rueda.h"
 
 /*Nota:
     1- Las esctuturas estan al principio y el main al final.
     2- Se cambiaron algunas variable a globales para reciclar.
-    3- Al hacer el cambio de pantalla mover el mouse 
+    3- Al hacer el cambio de pantalla mover el mouse
 */
 
 using namespace std;
@@ -23,6 +24,12 @@ ALLEGRO_EVENT_QUEUE* queue;
 
 //explicacion pendiente
 int cargar;
+
+//Declarar funciones
+void cambioMap(ALLEGRO_FONT*, ALLEGRO_COLOR, ALLEGRO_BITMAP*, int);
+bool entrarNivel1(ALLEGRO_FONT*, ALLEGRO_COLOR, ALLEGRO_BITMAP*, int);
+bool entrarNivel2(ALLEGRO_FONT*, ALLEGRO_COLOR, ALLEGRO_BITMAP*, int);
+bool entrarNivel3(ALLEGRO_FONT*, ALLEGRO_COLOR, ALLEGRO_BITMAP*, int);
 
 void must_init(bool test, const char* description)
 {
@@ -77,7 +84,7 @@ bool estruPunt(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgrou
 
     bool done = false;
     //Cargar imagen y posicionar (Correr una vez)
-    background = al_load_bitmap("intento.jpg");;
+    background = al_load_bitmap("puntuacion.jpeg");;
     al_draw_bitmap(background, 0, 0, 0);
     al_draw_text(font, al_map_rgb(0, 0, 0), 200, 0, 0, "Puntuaciones");
 
@@ -128,6 +135,8 @@ bool estruPunt(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgrou
 
 bool estruMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background)
 {
+
+    int currentMap = 1;
     //pantalla de mapa
     //Registro de mouse y teclado
     queue = al_create_event_queue();
@@ -142,13 +151,21 @@ bool estruMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgroun
     bool done = false;
     //Cargar imagen y posicionar (Correr una vez)
     //imagen temporal
-    background = al_load_bitmap("intento.jpg");;
+    background = al_load_bitmap("mapa.jpeg");;
     al_draw_bitmap(background, 0, 0, 0);
     al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Mapa");
+  
 
+    //bool refresh es para cargar el mapa nuevamente cuando se regresa de un nivel
+    bool refresh = true;
     while (true) {
         color = azul;
+        if (refresh) {
+            refresh = false;
+            cambioMap(font, color, background, currentMap);
+        }
         al_wait_for_event(queue, &event);
+
         switch (event.type)
         {
         case ALLEGRO_EVENT_MOUSE_AXES:
@@ -180,6 +197,277 @@ bool estruMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgroun
                     color = azul;
                     break;
                 }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) {
+                    if (currentMap == 1) {
+                        currentMap = 2;
+                    }
+                    else if (currentMap == 2) {
+                        currentMap = 3;
+                    }
+                    cambioMap(font, color, background, currentMap);
+                }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) {
+                    if (currentMap == 3) {
+                        currentMap = 2;
+
+                    }
+                    else if (currentMap == 2) {
+                        currentMap = 1;
+                    }
+                    cambioMap(font, color, background, currentMap);
+                }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                    if (currentMap == 1)
+                    {
+                        entrarNivel1(font, color, background, currentMap);
+                    }
+                    else if (currentMap == 2)
+                    {
+                        entrarNivel2(font, color, background, currentMap);
+                    }
+                    else if (currentMap == 3)
+                    {
+                        entrarNivel3(font, color, background, currentMap);
+                    }
+                    refresh = true;
+                }
+            }
+            break;
+        }
+
+        if (done) {
+            cargar = 0;
+            return true;
+        }
+    }
+}
+
+void cambioMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap) {
+    //al_destroy_bitmap(background);
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    background = al_load_bitmap("mapa.jpeg");
+    al_draw_bitmap(background, 0, 0, 0);
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Mapa");
+    botonVolver(font, color, background);
+
+    if (currentMap == 1)
+    {
+        al_draw_filled_rectangle(150, 50, 170, 100, al_map_rgb(255, 0, 0));
+        al_draw_filled_triangle(140, 100, 180, 100, 160, 130, al_map_rgb(255, 0, 0));
+    }
+    else if (currentMap == 2)
+    {
+        al_draw_filled_rectangle(390, 300, 410, 350, al_map_rgb(255, 0, 0));
+        al_draw_filled_triangle(380, 350, 420, 350, 400, 380, al_map_rgb(255, 0, 0));
+    }
+    else if (currentMap == 3)
+    {
+        al_draw_filled_rectangle(550, 50, 570, 100, al_map_rgb(255, 0, 0));
+        al_draw_filled_triangle(540, 100, 580, 100, 560, 130, al_map_rgb(255, 0, 0));
+    }
+    al_flip_display();
+}
+
+//Nivel 1, 2 y 3 temporal, copia de estruMap solo tiene el boton de regresar
+
+bool entrarNivel1(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap) {
+
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    queue = al_create_event_queue();
+    must_init(queue, "queue");
+    must_init(al_init_image_addon(), "image");
+    must_init(al_install_mouse(), "mouse");
+    must_init(al_install_keyboard(), "keyboard");
+    must_init(al_init_primitives_addon(), "primitives");
+    al_register_event_source(queue, al_get_mouse_event_source());
+    al_register_event_source(queue, al_get_keyboard_event_source());
+    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
+    al_register_event_source(queue, al_get_timer_event_source(timer));
+
+    bool done = false;
+
+    background = al_load_bitmap("nivel1.jpg");;
+    al_draw_bitmap(background, 0, 0, 0);
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Nivel 1");
+    
+    //botonVolver(font, color, background);
+    Rueda rueda(0);
+    al_start_timer(timer);
+    while (true) {
+        color = azul;
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_draw_bitmap(background, 0, 0, 0);
+        al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Nivel 1");
+        //botonVolver(font, color, background);
+        rueda.Draw();
+        al_flip_display();
+        al_wait_for_event(queue, &event);
+       
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_MOUSE_AXES:
+            //pasa por cierto rango cambia de color
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 60) {
+                color = rojo;
+                //botonVolver(font, color, background);
+
+            }
+            else {
+                color = azul;
+                //botonVolver(font, color, background);
+            }
+            break;
+
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 100) {
+                done = true;
+                color = azul;
+            }
+            break;
+        case ALLEGRO_EVENT_KEY_DOWN:
+            if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                    done = true;
+                    color = azul;
+                    break;
+                }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_G) {
+                    int r = (rueda.random(5) + 1);
+                    cout << r;
+                    rueda.setTargetF(r);
+                    break;
+                }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_R) {
+                    rueda.setTargetF(0);
+                    rueda.setAngulo(0);
+                    break;
+                }
+
+            }
+            break;
+
+        case ALLEGRO_EVENT_TIMER:
+            break;
+        }
+        if (done) {
+            cargar = 0;
+            return true;
+        }
+    }
+}
+
+bool entrarNivel2(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap) {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    queue = al_create_event_queue();
+    must_init(queue, "queue");
+    must_init(al_init_image_addon(), "image");
+    must_init(al_install_mouse(), "mouse");
+    must_init(al_install_keyboard(), "keyboard");
+    must_init(al_init_primitives_addon(), "primitives");
+    al_register_event_source(queue, al_get_mouse_event_source());
+    al_register_event_source(queue, al_get_keyboard_event_source());
+
+    bool done = false;
+
+    background = al_load_bitmap("nivel2.jpeg");;
+    al_draw_bitmap(background, 0, 0, 0);
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Nivel 2");
+    botonVolver(font, color, background);
+    while (true) {
+        color = azul;
+
+        al_wait_for_event(queue, &event);
+
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_MOUSE_AXES:
+            //pasa por cierto rango cambia de color
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 60) {
+                color = rojo;
+                botonVolver(font, color, background);
+            }
+            else {
+                color = azul;
+                botonVolver(font, color, background);
+            }
+            break;
+
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 100) {
+                done = true;
+                color = azul;
+            }
+            break;
+
+        case ALLEGRO_EVENT_KEY_DOWN:
+            if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                    done = true;
+                    color = azul;
+                    break;
+                }
+
+            }
+            break;
+        }
+
+        if (done) {
+            cargar = 0;
+            return true;
+        }
+    }
+}
+
+bool entrarNivel3(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap) {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    queue = al_create_event_queue();
+    must_init(queue, "queue");
+    must_init(al_init_image_addon(), "image");
+    must_init(al_install_mouse(), "mouse");
+    must_init(al_install_keyboard(), "keyboard");
+    must_init(al_init_primitives_addon(), "primitives");
+    al_register_event_source(queue, al_get_mouse_event_source());
+    al_register_event_source(queue, al_get_keyboard_event_source());
+
+    bool done = false;
+
+    background = al_load_bitmap("nivel3.jpeg");;
+    al_draw_bitmap(background, 0, 0, 0);
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Nivel 3");
+    botonVolver(font, color, background);
+    while (true) {
+        color = azul;
+
+        al_wait_for_event(queue, &event);
+
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_MOUSE_AXES:
+            //pasa por cierto rango cambia de color
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 60) {
+                color = rojo;
+                botonVolver(font, color, background);
+            }
+            else {
+                color = azul;
+                botonVolver(font, color, background);
+            }
+            break;
+
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            if (event.mouse.x > 670 && event.mouse.x < 800 && event.mouse.y>0 && event.mouse.y < 100) {
+                done = true;
+                color = azul;
+            }
+            break;
+        case ALLEGRO_EVENT_KEY_DOWN:
+            if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                    done = true;
+                    color = azul;
+                    break;
+                }
+
             }
             break;
         }
@@ -223,7 +511,7 @@ int main()
     al_register_event_source(queue, al_get_mouse_event_source());
 
     bool done = false;
-    
+
     cargar = 0;
 
     while (true) {
@@ -252,7 +540,7 @@ int main()
         //Rango de cambio de colores para salir
         bool over_salir = event.mouse.x > 300 && event.mouse.x < 500 && event.mouse.y>350 && event.mouse.y < 400;
         //Rango de cambio de colores para puntuaciones
-        bool over_points = event.mouse.x > 200 && event.mouse.x < 600 && event.mouse.y>250 && event.mouse.y <300;
+        bool over_points = event.mouse.x > 200 && event.mouse.x < 600 && event.mouse.y>250 && event.mouse.y < 300;
         //Rango de cambio de colores para mapa
         bool over_map = event.mouse.x > 300 && event.mouse.x < 500 && event.mouse.y>100 && event.mouse.y < 200;
 
@@ -268,7 +556,7 @@ int main()
                 color = azul;
                 boton2(font2, color, background);
                 //pantalla puntuacion
-                estruPunt(font2,color, background);
+                estruPunt(font2, color, background);
             }
             else if (over_map) {
                 color = azul;
@@ -328,4 +616,4 @@ int main()
 
     return 0;
 }
-//Proyecto 
+//Proyecto
