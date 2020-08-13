@@ -9,6 +9,8 @@
 #include <allegro5/allegro_native_dialog.h>
 #include "Rueda.h"
 
+//Funciona con las letras 1 y 2 para contestar preguntas
+
 using namespace std;
 //variables globales
 ALLEGRO_COLOR azul = al_map_rgba_f(0, 0, 0.5, 0.5);
@@ -276,6 +278,8 @@ bool pantallaP(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgrou
     
     int pregunta = (rueda.random(2) + 1);
     std::cout << pregunta;
+    //r es la categoria y pregunta seria la pregunta aleatoria
+    //Funciona con las letras 1 y 2 para contestar preguntas
     if (r==1) {
         if (pregunta == 1) {
             preguntas = al_load_bitmap("images/arte/Parte1.jpg");
