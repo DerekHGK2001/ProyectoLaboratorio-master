@@ -137,7 +137,9 @@ bool estruPunt(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgrou
         }
     }
 }
-
+int puntos = 0;
+string Puntos = "0";
+const char* PuntosS = "0";
 bool estruMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background)
 {
     int currentMap = 1;
@@ -228,7 +230,12 @@ bool estruMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgroun
                     }
                     else if (currentMap == 2)
                     {
-                        entrarNivel2(font, color, background, currentMap);
+                        if (puntos == 5) {
+                            entrarNivel2(font, color, background, currentMap);
+                        }
+                        else {
+                            MessageBox(NULL, L"Lo sentimos no tiene suficientes puntos", L"Advertencia", MB_OK);
+                        }
                     }
                     else if (currentMap == 3)
                     {
@@ -275,11 +282,9 @@ void cambioMap(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backgrou
 
 //Nivel 1, 2 y 3 temporal, copia de estruMap solo tiene el boton de regresar
 //Variables puntos
-int puntos = 0;;
-string Puntos = "0";
-const char* PuntosS = "0";
+
 bool entrarNivel1(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap) {
-    puntos = 0;
+   
     al_clear_to_color(al_map_rgb(0, 0, 0));
     queue = al_create_event_queue();
     must_init(queue, "queue");
@@ -307,6 +312,12 @@ bool entrarNivel1(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backg
    
     al_start_timer(timer);
     while (true) {
+        if (puntos == 5)
+        {
+            MessageBox(NULL, L"Se gano el juego.\nPuede avanzar al siguiente nivel.", L"Mensaje", MB_OK);
+            done = true;
+            break;
+        }
         color = azul;
         al_clear_to_color(al_map_rgb(0, 0, 0));
         al_draw_bitmap(background, 0, 0, 0);
@@ -350,8 +361,6 @@ bool entrarNivel1(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backg
                     rueda.setTargetF(3);
                     randCat = rand() % 4;
                     randPreg = rand() % 5;
-                    cout << randCat<<"\n";
-                    cout << randPreg<<"\n";
 
                     displayPregunta(font, color, background, randCat, randPreg);
 
@@ -495,7 +504,7 @@ bool displayPregunta(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* ba
                         MessageBox(NULL, L"Correcto!", L"Repuesta", MB_OK);
                     }
                     else {
-                        cout << "Incorrecto";
+                        MessageBox(NULL, L"Incorrecto :(", L"Repuesta", MB_OK);
                     }
                     done = true;
                     break;
@@ -528,7 +537,7 @@ bool entrarNivel2(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backg
 
     bool done = false;
 
-    background = al_load_bitmap("nivel2.jpg");;
+    background = al_load_bitmap("nivel2.jpeg");;
     al_draw_bitmap(background, 0, 0, 0);
     al_draw_text(font, al_map_rgb(0, 0, 0), 300, 0, 0, "Nivel 2");
     botonVolver(font, color, background);
