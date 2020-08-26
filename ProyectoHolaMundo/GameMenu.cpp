@@ -389,7 +389,7 @@ bool entrarNivel1(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* backg
 
 bool displayPregunta(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int cat, int pos) {
     Preguntas preguntas;
-    ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 30, 0);
+    ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 20, 0);
 
     al_clear_to_color(al_map_rgb(0, 0, 0));
     queue = al_create_event_queue();
