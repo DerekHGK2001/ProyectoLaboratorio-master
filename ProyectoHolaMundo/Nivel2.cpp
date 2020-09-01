@@ -80,7 +80,7 @@ void Nivel2::Logica(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* bac
 
     while (true) {
         if (posicion == 0) {
-            randPreg = rand() % 14;
+            randPreg = rand() % 13;
             posicion++;
         }
         //al_draw_bitmap(background, 0, 0, 0);
