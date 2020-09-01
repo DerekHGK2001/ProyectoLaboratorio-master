@@ -14,6 +14,7 @@ private:
 	string bancoPreguntas[4][5];
 	//string opciones[4][5];
 	int respuesta[4][5];
+
 };
 
 #endif // !PREGUNTAS_H

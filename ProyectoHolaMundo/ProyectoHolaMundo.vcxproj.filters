@@ -24,6 +24,9 @@
     <ClCompile Include="Preguntas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Nivel2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -32,10 +35,10 @@
     <ClInclude Include="Rueda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mapa.h">
+    <ClInclude Include="Preguntas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Preguntas.h">
+    <ClInclude Include="Nivel2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
