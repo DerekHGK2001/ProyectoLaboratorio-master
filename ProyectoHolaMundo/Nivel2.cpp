@@ -34,9 +34,10 @@ Nivel2::Nivel2() :vida1P(100), vida2P(100), respuesta1P(-1), respuesta2P(-1), li
     respuestas[12] = 0;
     respuestas[13] = 3;
 }
-
+bool run;
 void Nivel2::Logica(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* background, int currentMap)
 {
+    run = true;
     int randPreg;
     int posicion = 0;
     ALLEGRO_FONT* font2 = al_load_ttf_font("YARDSALE.ttf", 20, 0);
@@ -77,8 +78,8 @@ void Nivel2::Logica(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* bac
     //sprite1[2] = al_load_bitmap("1Psprite.png");
 
 
-
-    while (true) {
+    int a = 0;
+    while (run) {
         if (posicion == 0) {
             randPreg = rand() % 13;
             posicion++;
@@ -90,18 +91,32 @@ void Nivel2::Logica(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_BITMAP* bac
         al_draw_filled_rectangle(500, 50, 700, 100, al_map_rgb(0, 0, 0));
         al_draw_filled_rectangle(510, 60, ((float)vida2P / 100) * (180) + 510, 90, al_map_rgb(0, 255, 0));
         al_draw_filled_rectangle(((float)vida2P / 100) * (180) + 510, 60, 690, 90, al_map_rgb(255, 0, 0));
-        al_draw_multiline_text(font2, al_map_rgb(0, 0, 0), 210, 110, 550, 40, 0, Preguntas[randPreg].c_str());
-       
+        if(a!=1)
+            al_draw_multiline_text(font2, al_map_rgb(0, 0, 0), 210, 110, 550, 40, 0, Preguntas[randPreg].c_str());
+        if (a == 1) {
+            if(vida1P==0)
+                al_draw_multiline_text(font2, al_map_rgb(0, 0, 0), 210, 110, 550, 40, 0, "Jugador 2 ha ganado!\nPresione la tecla espacio para pasar al siguiente nivel");
+            else if (vida2P == 0) {
+                al_draw_multiline_text(font2, al_map_rgb(0, 0, 0), 210, 110, 550, 40, 0, "Jugador 1 ha ganado!\nPresione la tecla espacio para pasar al siguiente nivel");
+            }
+
+            switch (event.type) {
+            case ALLEGRO_EVENT_KEY_DOWN:
+
+                if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) {
+                    done = true;
+                    run = false;
+                }
+
+                break;
+            }
+
+        }
         if (vida1P == 0) {
-            cout << "Ganador jugador 2!\nPuede pasar al siguiente nivel";
-            done = true;
-            break;
+            a = 1;
         }
         else if (vida2P == 0) {
-            cout << "Ganador jugador 1!\nPuede pasar al siguiente nivel";
-            done = true;
-            break;
-            
+            a = 1;
         }
         if (listo1P)
         {
